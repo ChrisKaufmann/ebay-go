@@ -31,11 +31,9 @@ func TestEBay_ParseJSON(t *testing.T) {
 	assert.Equal(t, 3.95, il[6].ShippingPrice, "ShippingPrice")
 	assert.False(t, il[6].FreeShipping, "Free Shipping")
 
-
 	il, err = e.ParseJSON(fail_json)
 	assert.Nil(t, err, "GetItemsFromJSON")
 	assert.Equal(t, 0, len(il))
-
 
 	il, err = e.ParseJSON(empty_json)
 	assert.Nil(t, err, "GetItemsFromJSON")
@@ -48,6 +46,14 @@ func TestLowestPrice(t *testing.T) {
 	assert.Nil(t, err, "e.ParseJson(test_json)")
 	lp := LowestPrice(il)
 	assert.Equal(t, 0.22, lp.Price, "lp.Price")
+}
+func TestEndingSoonest(t *testing.T) {
+	print("TestEndingSoonest\n")
+	e := New("12345")
+	il, err := e.ParseJSON(test_json)
+	assert.Nil(t, err, "e.ParseJson(test_json)")
+	i := EndingSoonest(il)
+	assert.Equal(t, "2016-06-16T22:09:55.000Z", i.EndTime, "EndingSoonest")
 }
 
 const fail_json = `{"findItemsByKeywordsResponse":[{"ack":["Whoopsie"],"version":["1.13.0"]}]}`

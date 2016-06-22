@@ -1,38 +1,40 @@
 package ebay
 
 import (
-	u "github.com/ChrisKaufmann/goutils"
-	"github.com/golang/glog"
 	"encoding/json"
 	"fmt"
+	u "github.com/ChrisKaufmann/goutils"
+	"github.com/golang/glog"
 	"io/ioutil"
 	"net/http"
-	"strconv"
 	"sort"
+	"strconv"
 )
+
 type EBay struct {
 	ApplicationId string
-	URL string
+	URL           string
 	EntriesLength int
 }
 
 type Item struct {
-	ID 	string
-	Location string
-	Url   string
-	ImageUrl string
-	Title string
-	Price float64
+	ID            string
+	Location      string
+	Url           string
+	ImageUrl      string
+	Title         string
+	Price         float64
 	BuyItNowPrice float64
-	BuyItNow bool
+	BuyItNow      bool
 	ShippingPrice float64
-	FreeShipping bool
-	StartTime string
-	EndTime string
-	BestOffer bool
+	FreeShipping  bool
+	StartTime     string
+	EndTime       string
+	BestOffer     bool
 }
+
 func New(application_id string) *EBay {
-	e := EBay {}
+	e := EBay{}
 	e.ApplicationId = application_id
 	e.URL = "http://svcs.ebay.com/services/search/FindingService/v1"
 	e.EntriesLength = 100
@@ -68,16 +70,16 @@ func (e *EBay) ParseJSON(x string) (il []Item, err error) {
 							Value string `json:"__value__"`
 						} `json:"shippingServiceCost"`
 					} `json:"shippingInfo"`
-					Price    []struct {
+					Price []struct {
 						CurrentPrice []struct {
 							Value string `json:"__value__"`
 						} `json:"currentPrice"`
 					} `json:"sellingStatus"`
-					ListingInfo []struct{
+					ListingInfo []struct {
 						BuyNowEnabled []string `json:"buyItNowAvailable"`
-						StartTime []string `json:"startTime"`
-						EndTime []string `json:"endTime"`
-						BestOffer []string `json:"bestOfferEnabled"`
+						StartTime     []string `json:"startTime"`
+						EndTime       []string `json:"endTime"`
+						BestOffer     []string `json:"bestOfferEnabled"`
 					} `json:"listingInfo"`
 				} `json:"item"`
 			} `json:"searchResult"`
@@ -157,14 +159,23 @@ func (i Item) String() string {
 	return fmt.Sprintf("Url: %s\nTitle: %s\nPrice: %v\n", i.Url, i.Title, i.Price)
 }
 
-func LowestPrice(il []Item) (Item) {
+func LowestPrice(il []Item) Item {
 	sort.Sort(ByPrice(il))
-	return(il[0])
+	return (il[0])
 }
-
+func EndingSoonest(il []Item) Item {
+	sort.Sort(EndingSooner(il))
+	return (il[0])
+}
 
 type ByPrice []Item
 
 func (a ByPrice) Len() int           { return len(a) }
 func (a ByPrice) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a ByPrice) Less(i, j int) bool { return a[i].Price < a[j].Price }
+
+type EndingSooner []Item
+
+func (a EndingSooner) Len() int           { return len(a) }
+func (a EndingSooner) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a EndingSooner) Less(i, j int) bool { return a[i].EndTime < a[j].EndTime }

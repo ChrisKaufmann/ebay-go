@@ -6,8 +6,8 @@ Installation
 ------------
 `go get github.com/ChrisKaufmann/ebay-go`
 
-Usage
------
+Example
+-------
 <pre>
 package main
 import (
