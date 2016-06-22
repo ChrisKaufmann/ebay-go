@@ -40,6 +40,10 @@ func New(application_id string) *EBay {
 }
 func (e *EBay) Search(searchstring string) (il []Item, err error) {
 	x, err := e.GetResponse(searchstring)
+	if err != nil {
+		glog.Errorf("e.GetResponse(%s): %s", searchstring, err)
+		return il, err
+	}
 	il, err = e.ParseJSON(x)
 	if err != nil {
 		glog.Errorf("ebay.GetResponse(%s): %s", searchstring, err)
@@ -135,12 +139,11 @@ func (e *EBay) ParseJSON(x string) (il []Item, err error) {
 func (e *EBay) GetResponse(searchstring string) (x string, err error) {
 	url := fmt.Sprintf("%s?OPERATION-NAME=findItemsByKeywords&SERVICE-VERSION=1.0.0&SECURITY-APPNAME=%s&RESPONSE-DATA-FORMAT=JSON&REST-PAYLOAD&keywords=%s&GLOBAL-ID=EBAY-US&paginationInput.entriesPerPage=%v", e.URL, e.ApplicationId, searchstring, e.EntriesLength)
 	resp, err := http.Get(url)
-	defer resp.Body.Close()
-
 	if err != nil {
 		glog.Errorf("http.Get(%s): %s", url, err)
 		return x, err
 	}
+	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		glog.Errorf("ioutil.ReadAll(%s): %s", resp.Body, err)

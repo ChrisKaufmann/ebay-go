@@ -1,5 +1,13 @@
+ebay-go
+=======
 Another golang ebay API, mostly for searching.
 
+Installation
+------------
+`go get github.com/ChrisKaufmann/ebay-go`
+
+Usage
+-----
 <pre>
 package main
 import (
@@ -17,17 +25,28 @@ func init() {
 }
 
 func main() {
-    search_string = "Atari%202600%20combat"
+    search_string := "Atari%202600%20combat"
     itemlist, err  := eb.Search(search_string)
     if err != nil {
         fmt.Printf("eb.Search(%s): %s", search_string, err)
         return
     }
     for _, i := range itemlist {
-        fmt.Printf("ID: %s\n", i.ID)
+        fmt.Printf("ID: %s\n", i.ID)                        //"322119314985"
+        fmt.Printf("Location: %s\n", i.Location)            //"Minneapolis,MN,USA"
+        fmt.Printf("Url: %s\n", i.Url)                      //"http://www.ebay.com/itm/3-D-Tic-Tac-Toe-Atari-2600-1980-CARTRIDGE-ONLY-CLEAN-TESTED-/322119314985"
+        fmt.Printf("ImageUrl: %s\n", i.ImageUrl)            //"http://thumbs2.ebaystatic.com/m/msVJvxYHgLg8C29GpD6-ZfQ/140.jpg"
+        fmt.Printf("Title: %s\n", i.Title)                  //"3-D Tic-Tac-Toe (Atari 2600, 1980) CARTRIDGE ONLY! CLEAN & TESTED! "
+        fmt.Printf("Price: %v\n", i.Price)                  //5.95
+        fmt.Printf("BuyItNowPrice: %v\n", i.BuyItNowPrice)  //0.00
+        fmt.Printf("BuyItNow: %v\n", i.BuyItNow)            //false
+        fmt.Printf("ShippingPrice: %v\n", i.ShippingPrice)  //0.0
+        fmt.Printf("FreeShipping: %v\n", i.FreeShipping)    //true
+        fmt.Printf("StartTime: %s\n", i.StartTime)          //"2016-05-23T20:41:25.000Z"
+        fmt.Printf("EndTime: %s\n", i.EndTime)              //"2016-06-22T20:41:25.000Z"
+        fmt.Printf("BestOffer: %s\n", i.BestOffer)          //false
     }
-    ci := eb.LowestPrice(itemlist)
+    ci := ebay.LowestPrice(itemlist)
     fmt.Printf("Cheapest ID and price: %s, %s\n", ci.ID, ci.Price)
-    
 }
 </pre>
