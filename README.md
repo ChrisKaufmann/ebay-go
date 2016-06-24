@@ -6,6 +6,20 @@ Installation
 ------------
 `go get github.com/ChrisKaufmann/ebay-go`
 
+Usage
+-----
+```
+eb := ebay.New("my application ID")
+items, err := eb.Search("Something")
+if err != nil {return err}
+```
+Convenience:
+```
+cheapest := LowestPrice(itemlist)       // returns the item with the lowest price
+c2 := LowestPricePlusShipping(itemlist) //returns cheapest with shipping
+e := EndingSoonest(itemlist)            //ending soonest
+```
+
 Example
 -------
 <pre>
@@ -48,5 +62,8 @@ func main() {
     }
     ci := ebay.LowestPrice(itemlist)
     fmt.Printf("Cheapest ID and price: %s, %s\n", ci.ID, ci.Price)
+    
+    cips := ebay.LowestPricePlusShipping(itemlist)
+    fmt.Printf("Cheapest price+shipping: id: %s, price: %v, shipping: %v, shippingtype: %s\n", cips.ID, cips.Price, cips.ShippingPrice, cips.ShippingType)
 }
 </pre>

@@ -28,6 +28,7 @@ type Item struct {
 	BuyItNow      bool
 	ShippingPrice float64
 	FreeShipping  bool
+	ShippingType  string
 	StartTime     string
 	EndTime       string
 	BestOffer     bool
@@ -115,6 +116,7 @@ func (e *EBay) ParseJSON(x string) (il []Item, err error) {
 		if i.Shipping[0].ShippingType[0] == "Free" {
 			ni.FreeShipping = true
 		}
+		ni.ShippingType = i.Shipping[0].ShippingType[0]
 		if i.ListingInfo[0].BuyNowEnabled[0] == "true" {
 			ni.BuyItNow = true
 		} else {
@@ -163,8 +165,15 @@ func LowestPrice(il []Item) Item {
 	sort.Sort(ByPrice(il))
 	return (il[0])
 }
+func LowestPricePlusShipping(il []Item) Item {
+	sort.Sort(ByPricePlusShipping(il))
+	return (il[0])
+}
 func EndingSoonest(il []Item) Item {
 	sort.Sort(EndingSooner(il))
+	for _, i := range il {
+		fmt.Printf("id: %s, price: %v, ship: %v, shiptype: %s\n", i.ID, i.Price, i.ShippingPrice, i.ShippingType)
+	}
 	return (il[0])
 }
 
@@ -173,6 +182,17 @@ type ByPrice []Item
 func (a ByPrice) Len() int           { return len(a) }
 func (a ByPrice) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a ByPrice) Less(i, j int) bool { return a[i].Price < a[j].Price }
+
+type ByPricePlusShipping []Item
+
+func (a ByPricePlusShipping) Len() int      { return len(a) }
+func (a ByPricePlusShipping) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+func (a ByPricePlusShipping) Less(i, j int) bool {
+	if a[i].ShippingType == "Calculated" {
+		return false
+	}
+	return (a[i].Price + a[i].ShippingPrice) < (a[j].Price + a[j].ShippingPrice)
+}
 
 type EndingSooner []Item
 
