@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"sort"
 	"strconv"
+	"strings"
 )
 
 type EBay struct {
@@ -42,6 +43,7 @@ func New(application_id string) *EBay {
 	return &e
 }
 func (e *EBay) Search(searchstring string) (il []Item, err error) {
+	searchstring = strings.Replace(searchstring, " ", "%20", -1)
 	x, err := e.GetResponse(searchstring)
 	if err != nil {
 		glog.Errorf("e.GetResponse(%s): %s", searchstring, err)
@@ -167,7 +169,11 @@ func LowestPrice(il []Item) Item {
 }
 func LowestPricePlusShipping(il []Item) Item {
 	sort.Sort(ByPricePlusShipping(il))
-	return (il[0])
+	if len(il) > 0 {
+		return (il[0])
+	}
+	var i Item
+	return i
 }
 func EndingSoonest(il []Item) Item {
 	sort.Sort(EndingSooner(il))
