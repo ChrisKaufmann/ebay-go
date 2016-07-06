@@ -3,7 +3,6 @@ package ebay
 import (
 	"encoding/json"
 	"fmt"
-	u "github.com/ChrisKaufmann/goutils"
 	"github.com/golang/glog"
 	"io/ioutil"
 	"net/http"
@@ -98,7 +97,8 @@ func (e *EBay) ParseJSON(x string) (il []Item, err error) {
 	if g.Resp[0].Ack[0] != "Success" {
 		return il, err
 	}
-	if u.Toint(g.Resp[0].SearchResult[0].Count) < 1 {
+	rc, err := strconv.Atoi(g.Resp[0].SearchResult[0].Count)
+	if err != nil || rc < 1 {
 		return il, err
 	}
 	for _, i := range g.Resp[0].SearchResult[0].Item {
