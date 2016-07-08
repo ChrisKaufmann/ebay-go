@@ -65,5 +65,8 @@ func main() {
     
     cips := ebay.LowestPricePlusShipping(itemlist)
     fmt.Printf("Cheapest price+shipping: id: %s, price: %v, shipping: %v, shippingtype: %s\n", cips.ID, cips.Price, cips.ShippingPrice, cips.ShippingType)
+    
+    es := ebay.EndingSoonest(itemlist)
+    fmt.Printf("Ending soonest: ID: %s, Endtime: %s\n", es.ID, es.EndTime)
 }
 </pre>

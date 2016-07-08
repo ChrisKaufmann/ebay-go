@@ -117,6 +117,7 @@ func (e *EBay) ParseJSON(x string) (il []Item, err error) {
 		}
 		if i.Shipping[0].ShippingType[0] == "Free" {
 			ni.FreeShipping = true
+			ni.ShippingPrice = 0.0
 		}
 		ni.ShippingType = i.Shipping[0].ShippingType[0]
 		if i.ListingInfo[0].BuyNowEnabled[0] == "true" {
@@ -177,9 +178,6 @@ func LowestPricePlusShipping(il []Item) Item {
 }
 func EndingSoonest(il []Item) Item {
 	sort.Sort(EndingSooner(il))
-	for _, i := range il {
-		fmt.Printf("id: %s, price: %v, ship: %v, shiptype: %s\n", i.ID, i.Price, i.ShippingPrice, i.ShippingType)
-	}
 	return (il[0])
 }
 
@@ -196,6 +194,12 @@ func (a ByPricePlusShipping) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
 func (a ByPricePlusShipping) Less(i, j int) bool {
 	if a[i].ShippingType == "Calculated" {
 		return false
+	}
+	if a[i].ShippingType == "Free" {
+		a[i].ShippingPrice = 0.0
+	}
+	if a[j].ShippingType == "Free" {
+		a[j].ShippingPrice = 0.0
 	}
 	return (a[i].Price + a[i].ShippingPrice) < (a[j].Price + a[j].ShippingPrice)
 }
