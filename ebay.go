@@ -169,9 +169,15 @@ func LowestPrice(il []Item) Item {
 	return (il[0])
 }
 func LowestPricePlusShipping(il []Item) Item {
-	sort.Sort(ByPricePlusShipping(il))
-	if len(il) > 0 {
-		return (il[0])
+	var tl []Item
+	for _, i := range il {
+		if i.ShippingType != "Calculated" {
+			tl = append(tl, i)
+		}
+	}
+	sort.Sort(ByPricePlusShipping(tl))
+	if len(tl) > 0 {
+		return (tl[0])
 	}
 	var i Item
 	return i
