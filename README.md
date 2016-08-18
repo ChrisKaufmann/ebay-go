@@ -40,6 +40,8 @@ func init() {
 
 func main() {
     search_string := "Atari%202600%20combat"
+    // Optionally, set a category id
+    // eb.CategoryID=1122334455
     itemlist, err  := eb.Search(search_string)
     if err != nil {
         fmt.Printf("eb.Search(%s): %s", search_string, err)
@@ -68,5 +70,14 @@ func main() {
     
     es := ebay.EndingSoonest(itemlist)
     fmt.Printf("Ending soonest: ID: %s, Endtime: %s\n", es.ID, es.EndTime)
+    
+    //find some completed auctions
+    completedlist, err := eb.SearchCompleted("antique rocking horse")
+    if err != nil {
+        fmt.Printf("eb.SearchCompleted(...): %s", err)
+        return
+    }
+    // All the sorting, etc work the same on completed as on regular auctions
+    ci = ebay.LowestPricePlusShipping(completedlist)
 }
 </pre>
