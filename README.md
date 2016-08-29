@@ -12,6 +12,7 @@ Usage
 eb := ebay.New("my application ID")
 items, err := eb.Search("Something")
 if err != nil {return err}
+completed, err := eb.SearchCompleted("Something finished")
 ```
 Convenience:
 ```
